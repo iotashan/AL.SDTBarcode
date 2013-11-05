@@ -33,7 +33,6 @@
 		D9B0509218297FE000CCE883 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9B0509118297FE000CCE883 /* CoreVideo.framework */; };
 		D9B0509418297FF000CCE883 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9B0509318297FEF00CCE883 /* CoreMedia.framework */; };
 		D9B0509618297FFB00CCE883 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9B0509518297FFB00CCE883 /* AVFoundation.framework */; };
-		D9B050971829802100CCE883 /* libsdt_brc_ios2_v6.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D972200918293A890039838D /* libsdt_brc_ios2_v6.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,7 +73,6 @@
 			files = (
 				D9B0509618297FFB00CCE883 /* AVFoundation.framework in Frameworks */,
 				D9B0509418297FF000CCE883 /* CoreMedia.framework in Frameworks */,
-				D9B050971829802100CCE883 /* libsdt_brc_ios2_v6.a in Frameworks */,
 				D9B0509218297FE000CCE883 /* CoreVideo.framework in Frameworks */,
 				D9721FFE18293A480039838D /* CoreGraphics.framework in Frameworks */,
 				D972200218293A630039838D /* UIKit.framework in Frameworks */,

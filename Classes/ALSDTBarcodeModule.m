@@ -10,6 +10,21 @@
 #import "TiUtils.h"
 #import "TiViewController.h"
 
+UIView * ViewForViewProxy(TiViewProxy * proxy);
+
+UIView * ViewForViewProxy(TiViewProxy * proxy)
+{
+    [[proxy view] setAutoresizingMask:UIViewAutoresizingNone];
+    
+    //make the proper resize !
+    TiThreadPerformOnMainThread(^{
+        [proxy windowWillOpen];
+        [proxy reposition];
+        [proxy windowDidOpen];
+    },YES);
+    return [[[TiViewController alloc] initWithViewProxy:proxy] autorelease].view;
+}
+
 @implementation ALSDTBarcodeModule
 
 #pragma mark Internal
@@ -35,6 +50,7 @@
 	[super startup];
 	
 	NSLog(@"[INFO] %@ loaded",self);
+
 }
 
 -(void)shutdown:(id)sender
@@ -87,47 +103,56 @@
 
 #pragma Public APIs
 
--(id)showScanner:(id)args
+-(id)init:(id)args
 {
-    SDTBarcodeEngine* barcodeEngine = [[SDTBarcodeEngine alloc] initWithLicense:@"YOUR DEVELOPER LICENSE"];
+    NSLog(@"test here 2");
 
-    ENSURE_UI_THREAD(showScanner, args);
+    NSLog(@"test here3");
 
-
-	if(scaner != nil){
-        // Specify barcode type flags
-		[scaner setReadInputTypes:SDTBARCODETYPE_ALL_1D];
-		[scaner startScan: self];
-        
-    }
+    ENSURE_UI_THREAD(init,args);
+    ENSURE_SINGLE_ARG(args,NSDictionary);
     
     UIView *overlayView = nil;
     TiViewProxy *overlayProxy = [args objectForKey:@"overlay"];
     if (overlayProxy != nil)
     {
         ENSURE_TYPE(overlayProxy, TiViewProxy);
-        overlayView = [overlayProxy view];
-        
+        overlayView = ViewForViewProxy(overlayProxy);
+
         //[overlayProxy layoutChildren:NO];
         [TiUtils setView:overlayView positionRect:[UIScreen mainScreen].bounds];
     }
     
-    BOOL *useFrontCamera = [[args objectForKey:@"useFrontCamera"] boolValue];
+    BOOL *useFrontCamera = [TiUtils boolValue: [args objectForKey:@"useFrontCamera"]];
     if (!useFrontCamera) useFrontCamera = false;
     
-    BOOL *enableAutofocus = [[args objectForKey:@"enableAutofocus"] boolValue];
+    BOOL *enableAutofocus = [TiUtils boolValue: [args objectForKey:@"enableAutofocus"]];
     if (!enableAutofocus) enableAutofocus = true;
 
-    BOOL *enableFlash = [[args objectForKey:@"enableFlash"] boolValue];
+    BOOL *enableFlash = [TiUtils boolValue: [args objectForKey:@"enableFlash"]];
     if (!enableFlash) enableFlash = false;
 
-
-	scaner = [[[SDTBarcodeScannerViewController alloc] initWithLicenseEx:@"DEVELOPER LICENSE"
+    scaner = [[[SDTBarcodeScannerViewController alloc] initWithLicenseEx:@"DEVELOPER LICENSE"
                                                         callbackDelegate:self
                                                            customOverlay:overlayView
-                                                          useFrontCamera:useFrontCamera
-                                                         enableAutofocus:enableAutofocus
-                                                             enableFlash:enableFlash] retain];
+                                                          useFrontCamera:false
+                                                         enableAutofocus:true
+                                                             enableFlash:false] retain];
+}
+
+-(id)showScanner:(id)args
+{
+    NSLog(@"test here");
+	if(scaner != nil){
+        ENSURE_UI_THREAD(showScanner, args);
+        NSLog(@"test here 4");
+
+        // Specify barcode type flags
+		[scaner setReadInputTypes:SDTBARCODETYPE_ALL_1D];
+		[scaner startScan: (UIViewController*) self];
+        
+    }
+    
 }
 
 // protocol SDTBarcodeScannerViewControllerDelegate implementation

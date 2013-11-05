@@ -6,7 +6,7 @@
 
 // open a single window
 var win = Ti.UI.createWindow({
-	backgroundColor:'white'
+    backgroundColor:'white'
 });
 var label = Ti.UI.createLabel();
 win.add(label);
@@ -15,12 +15,14 @@ win.open();
 // TODO: write your module tests here
 var SDTBarcode = require('AL.SDTBarcode');
  
-SDTBarcode.showScanner({
-	overlay: Ti.UI.View,
-	useFrontCamera: false,
-	enableAutofocus: true,
-	enableFlash: false
+SDTBarcode.init({
+    overlay: Ti.UI.createView({width: 30, height: 30, backgroundColor: 'red'}),
+    useFrontCamera: false,
+    enableAutofocus: true,
+    enableFlash: false
 });
+
+SDTBarcode.showScanner();
 // SDTBarcode.hideScanner();
 // SDTBarcode.flashOn();
 // SDTBarcode.flashOff();
