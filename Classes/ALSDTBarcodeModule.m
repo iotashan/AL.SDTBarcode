@@ -166,6 +166,8 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
             
 			//textView.text = [textView.text stringByAppendingFormat:@"%@ - %@", resultTypeName, resultValue];
             //textView.text = [textView.text stringByAppendingString:@"\n"];
+            
+            [self fireEvent:@"scan_complete" withObject:@{@"value":[resultValue copy], @"barcode_type":[resultTypeName copy]}];
 			
 			if(resultValue != nil) {
 				[resultValue release];
@@ -177,12 +179,13 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
 		
 	}
 	
-    
+    /*
 	if(theImage != nil) {
-		//NSLog(@"sdt_brc_ios_sample3ViewController::onRecognitionComplete. Set image = %d", (id)theImage);
+		NSLog(@"sdt_brc_ios_sample3ViewController::onRecognitionComplete. Set image = %d", (id)theImage);
 		
         //imageView.image = [[[UIImage alloc] initWithCGImage: theImage scale: 1.0 orientation: theOrientation] autorelease];
 	}
+    */
     
 	//NSLog(@"onRecognitionComplete <-");
     
