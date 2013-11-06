@@ -14,9 +14,24 @@ win.open();
 
 // TODO: write your module tests here
 var SDTBarcode = require('AL.SDTBarcode');
- 
+
+var overlay = Ti.UI.createView({
+  top: 10,
+  left: 10,
+  right: 10,
+  height: 48,
+  width: 60,
+  backgroundColor: "green",
+  opacity: 0.6,
+});
+overlay.add(Ti.UI.createLabel({
+  top: 8,
+  left: 8,
+  text: 'scan your barcode using the camera',
+}));
+
 SDTBarcode.init({
-    overlay: Ti.UI.createView({width: 30, height: 30, backgroundColor: 'red'}),
+    overlay: overlay,
     useFrontCamera: false,
     enableAutofocus: true,
     enableFlash: false
