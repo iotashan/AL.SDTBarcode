@@ -14,23 +14,29 @@ win.open();
 
 // TODO: write your module tests here
 var SDTBarcode = require('AL.SDTBarcode');
+SDTBarcode.addEventListener("scan_complete", function(e) {
+  Ti.API.info(JSON.stringify(e));
+})
 
 var overlay = Ti.UI.createView({
   top: 10,
   left: 10,
   right: 10,
   height: 48,
-  width: 60,
+  width: 300,
   backgroundColor: "green",
   opacity: 0.6,
 });
 overlay.add(Ti.UI.createLabel({
   top: 8,
   left: 8,
+  width: 260,
+  height: 24,
   text: 'scan your barcode using the camera',
 }));
 
 SDTBarcode.init({
+    licenseKey: "YOUR LICENSE KEY HERE",
     overlay: overlay,
     useFrontCamera: false,
     enableAutofocus: true,
@@ -39,5 +45,5 @@ SDTBarcode.init({
 
 SDTBarcode.showScanner();
 // SDTBarcode.hideScanner();
-// SDTBarcode.flashOn();
+SDTBarcode.flashOn();
 // SDTBarcode.flashOff();

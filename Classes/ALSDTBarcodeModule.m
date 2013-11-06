@@ -123,21 +123,20 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
             overlayView = overlayProxy.view;
         }
         
-        BOOL *useFrontCamera = [TiUtils boolValue: [args objectForKey:@"useFrontCamera"]];
-        if (!useFrontCamera) useFrontCamera = false;
+        BOOL useFrontCamera = [TiUtils boolValue:@"useFrontCamera" properties:args def:false];
         
-        BOOL *enableAutofocus = [TiUtils boolValue: [args objectForKey:@"enableAutofocus"]];
-        if (!enableAutofocus) enableAutofocus = true;
+        BOOL enableAutofocus = [TiUtils boolValue:@"enableAutofocus" properties:args def:true];
 
-        BOOL *enableFlash = [TiUtils boolValue: [args objectForKey:@"enableFlash"]];
-        if (!enableFlash) enableFlash = false;
+        BOOL enableFlash = [TiUtils boolValue:@"enableFlash" properties:args def:false];
 
-        scaner = [[[SDTBarcodeScannerViewController alloc] initWithLicenseEx:@"DEVELOPER LICENSE"
+        NSString * licenseKey = [TiUtils stringValue:@"licenseKey" properties:args def:@"DEVELOPER LICENSE"];
+        
+        scaner = [[[SDTBarcodeScannerViewController alloc] initWithLicenseEx:licenseKey
                                                             callbackDelegate:self
                                                                customOverlay:overlayView
-                                                              useFrontCamera:false
-                                                             enableAutofocus:true
-                                                                 enableFlash:false] retain];
+                                                              useFrontCamera:useFrontCamera
+                                                             enableAutofocus:enableAutofocus
+                                                                 enableFlash:enableFlash] retain];
         
     }, YES);
     return nil;
@@ -163,7 +162,6 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
 }
 
 -(id)flashOn:(id)args {
-    NSLog(@"flashOn, captureDevice is %@", captureDevice);
     if ([captureDevice hasTorch] && [captureDevice hasFlash]) {
         [captureDevice lockForConfiguration:nil];
         [captureDevice setTorchMode:AVCaptureTorchModeOn];
