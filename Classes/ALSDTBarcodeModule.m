@@ -108,6 +108,12 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
 {
     ENSURE_SINGLE_ARG(args,NSDictionary);
 
+    Class captureDeviceClass = NSClassFromString(@"AVCaptureDevice");
+    if (captureDeviceClass != nil) {
+        captureDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+        NSLog(@"capture device: %@", captureDevice);
+    }
+
     TiThreadPerformOnMainThread(^{
         UIView *overlayView = nil;
         TiViewProxy *overlayProxy = [args objectForKey:@"overlay"];
@@ -149,6 +155,35 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
     return nil;
 }
 
+-(id)hideScanner:(id)args {
+    if (scaner != nil) {
+        [scaner stopScan];
+    }
+    return nil;
+}
+
+-(id)flashOn:(id)args {
+    NSLog(@"flashOn, captureDevice is %@", captureDevice);
+    if ([captureDevice hasTorch] && [captureDevice hasFlash]) {
+        [captureDevice lockForConfiguration:nil];
+        [captureDevice setTorchMode:AVCaptureTorchModeOn];
+        [captureDevice setFlashMode:AVCaptureFlashModeOn];
+        [captureDevice unlockForConfiguration];
+    }
+    return nil;
+}
+
+-(id)flashOff:(id)args {
+    if ([captureDevice hasTorch] && [captureDevice hasFlash]) {
+        [captureDevice lockForConfiguration:nil];
+        [captureDevice setTorchMode:AVCaptureTorchModeOff];
+        [captureDevice setFlashMode:AVCaptureFlashModeOff];
+        [captureDevice unlockForConfiguration];
+    }
+    return nil;
+}
+
+
 // protocol SDTBarcodeScannerViewControllerDelegate implementation
 - (BOOL)onRecognitionComplete:(SDTBarcodeEngine*)theEngine onImage:(CGImageRef)theImage orientation:(UIImageOrientation)theOrientation {
 	
@@ -163,9 +198,6 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
 			
 			[theEngine getResultValueAtPos:c storeIn:resultValue];
 			[theEngine getResultTypeNameAtPos:c storeIn:resultTypeName];
-            
-			//textView.text = [textView.text stringByAppendingFormat:@"%@ - %@", resultTypeName, resultValue];
-            //textView.text = [textView.text stringByAppendingString:@"\n"];
             
             [self fireEvent:@"scan_complete" withObject:@{@"value":[resultValue copy], @"barcode_type":[resultTypeName copy]}];
 			
