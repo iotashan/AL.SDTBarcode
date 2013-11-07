@@ -8,6 +8,7 @@
 #import "TiBase.h"
 #import "TiHost.h"
 #import "TiUtils.h"
+#import "TiApp.h"
 #import "TiViewController.h"
 
 UIView * ViewForViewProxy(TiViewProxy * proxy);
@@ -105,55 +106,81 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
 
 -(id)init:(id)args
 {
-    NSLog(@"test here 2");
-
-    NSLog(@"test here3");
-
-    ENSURE_UI_THREAD(init,args);
     ENSURE_SINGLE_ARG(args,NSDictionary);
-    
-    UIView *overlayView = nil;
-    TiViewProxy *overlayProxy = [args objectForKey:@"overlay"];
-    if (overlayProxy != nil)
-    {
-        ENSURE_TYPE(overlayProxy, TiViewProxy);
-        overlayView = ViewForViewProxy(overlayProxy);
 
-        //[overlayProxy layoutChildren:NO];
-        [TiUtils setView:overlayView positionRect:[UIScreen mainScreen].bounds];
+    Class captureDeviceClass = NSClassFromString(@"AVCaptureDevice");
+    if (captureDeviceClass != nil) {
+        captureDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+        NSLog(@"capture device: %@", captureDevice);
     }
-    
-    BOOL *useFrontCamera = [TiUtils boolValue: [args objectForKey:@"useFrontCamera"]];
-    if (!useFrontCamera) useFrontCamera = false;
-    
-    BOOL *enableAutofocus = [TiUtils boolValue: [args objectForKey:@"enableAutofocus"]];
-    if (!enableAutofocus) enableAutofocus = true;
 
-    BOOL *enableFlash = [TiUtils boolValue: [args objectForKey:@"enableFlash"]];
-    if (!enableFlash) enableFlash = false;
+    TiThreadPerformOnMainThread(^{
+        UIView *overlayView = nil;
+        TiViewProxy *overlayProxy = [args objectForKey:@"overlay"];
+        if (overlayProxy != nil)
+        {
+            ENSURE_TYPE(overlayProxy, TiViewProxy);
+            overlayView = overlayProxy.view;
+        }
+        
+        BOOL useFrontCamera = [TiUtils boolValue:@"useFrontCamera" properties:args def:false];
+        
+        BOOL enableAutofocus = [TiUtils boolValue:@"enableAutofocus" properties:args def:true];
 
-    scaner = [[[SDTBarcodeScannerViewController alloc] initWithLicenseEx:@"DEVELOPER LICENSE"
-                                                        callbackDelegate:self
-                                                           customOverlay:overlayView
-                                                          useFrontCamera:false
-                                                         enableAutofocus:true
-                                                             enableFlash:false] retain];
+        BOOL enableFlash = [TiUtils boolValue:@"enableFlash" properties:args def:false];
+
+        NSString * licenseKey = [TiUtils stringValue:@"licenseKey" properties:args def:@"DEVELOPER LICENSE"];
+        
+        scaner = [[[SDTBarcodeScannerViewController alloc] initWithLicenseEx:licenseKey
+                                                            callbackDelegate:self
+                                                               customOverlay:overlayView
+                                                              useFrontCamera:useFrontCamera
+                                                             enableAutofocus:enableAutofocus
+                                                                 enableFlash:enableFlash] retain];
+        
+    }, YES);
+    return nil;
 }
 
 -(id)showScanner:(id)args
 {
-    NSLog(@"test here");
 	if(scaner != nil){
         ENSURE_UI_THREAD(showScanner, args);
-        NSLog(@"test here 4");
 
         // Specify barcode type flags
 		[scaner setReadInputTypes:SDTBARCODETYPE_ALL_1D];
-		[scaner startScan: (UIViewController*) self];
-        
+        [scaner startScan:[TiApp app].controller];
     }
-    
+    return nil;
 }
+
+-(id)hideScanner:(id)args {
+    if (scaner != nil) {
+        [scaner stopScan];
+    }
+    return nil;
+}
+
+-(id)flashOn:(id)args {
+    if ([captureDevice hasTorch] && [captureDevice hasFlash]) {
+        [captureDevice lockForConfiguration:nil];
+        [captureDevice setTorchMode:AVCaptureTorchModeOn];
+        [captureDevice setFlashMode:AVCaptureFlashModeOn];
+        [captureDevice unlockForConfiguration];
+    }
+    return nil;
+}
+
+-(id)flashOff:(id)args {
+    if ([captureDevice hasTorch] && [captureDevice hasFlash]) {
+        [captureDevice lockForConfiguration:nil];
+        [captureDevice setTorchMode:AVCaptureTorchModeOff];
+        [captureDevice setFlashMode:AVCaptureFlashModeOff];
+        [captureDevice unlockForConfiguration];
+    }
+    return nil;
+}
+
 
 // protocol SDTBarcodeScannerViewControllerDelegate implementation
 - (BOOL)onRecognitionComplete:(SDTBarcodeEngine*)theEngine onImage:(CGImageRef)theImage orientation:(UIImageOrientation)theOrientation {
@@ -170,8 +197,7 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
 			[theEngine getResultValueAtPos:c storeIn:resultValue];
 			[theEngine getResultTypeNameAtPos:c storeIn:resultTypeName];
             
-			//textView.text = [textView.text stringByAppendingFormat:@"%@ - %@", resultTypeName, resultValue];
-            //textView.text = [textView.text stringByAppendingString:@"\n"];
+            [self fireEvent:@"scan_complete" withObject:@{@"value":[resultValue copy], @"barcode_type":[resultTypeName copy]}];
 			
 			if(resultValue != nil) {
 				[resultValue release];
@@ -183,12 +209,13 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
 		
 	}
 	
-    
+    /*
 	if(theImage != nil) {
-		//NSLog(@"sdt_brc_ios_sample3ViewController::onRecognitionComplete. Set image = %d", (id)theImage);
+		NSLog(@"sdt_brc_ios_sample3ViewController::onRecognitionComplete. Set image = %d", (id)theImage);
 		
         //imageView.image = [[[UIImage alloc] initWithCGImage: theImage scale: 1.0 orientation: theOrientation] autorelease];
 	}
+    */
     
 	//NSLog(@"onRecognitionComplete <-");
     

@@ -10,6 +10,7 @@
 
 @interface ALSDTBarcodeModule : TiModule<SDTBarcodeScannerViewControllerDelegate> {
     SDTBarcodeScannerViewController* scaner;
+    AVCaptureDevice * captureDevice;
 }
 
 - (BOOL)onRecognitionComplete:(SDTBarcodeEngine*)theEngine onImage:(CGImageRef)theImage orientation:(UIImageOrientation)theOrientation;
