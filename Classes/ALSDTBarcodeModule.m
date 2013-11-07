@@ -49,9 +49,6 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
 	// this method is called when the module is first loaded
 	// you *must* call the superclass
 	[super startup];
-	
-	NSLog(@"[INFO] %@ loaded",self);
-
 }
 
 -(void)shutdown:(id)sender
@@ -79,27 +76,6 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
 	// optionally release any resources that can be dynamically
 	// reloaded once memory is available - such as caches
 	[super didReceiveMemoryWarning:notification];
-}
-
-#pragma mark Listener Notifications
-
--(void)_listenerAdded:(NSString *)type count:(int)count
-{
-	if (count == 1 && [type isEqualToString:@"my_event"])
-	{
-		// the first (of potentially many) listener is being added 
-		// for event named 'my_event'
-	}
-}
-
--(void)_listenerRemoved:(NSString *)type count:(int)count
-{
-	if (count == 0 && [type isEqualToString:@"my_event"])
-	{
-		// the last listener called for event named 'my_event' has
-		// been removed, we can optionally clean up any resources
-		// since no body is listening at this point for that event
-	}
 }
 
 #pragma Public APIs
@@ -184,12 +160,11 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
 
 // protocol SDTBarcodeScannerViewControllerDelegate implementation
 - (BOOL)onRecognitionComplete:(SDTBarcodeEngine*)theEngine onImage:(CGImageRef)theImage orientation:(UIImageOrientation)theOrientation {
-	
-	//NSLog(@"onRecognitionComplete ->");
-    
-    
+	 
 	if(theEngine != nil) {
 		int resultCount = [theEngine getResultsCount];
+        NSMutableArray* returnArray = [NSMutableArray array];
+        NSMutableDictionary* returnObject = [[NSMutableDictionary alloc] init];
 		for (int c = 0; c < resultCount; c++) {
 			NSMutableString* resultValue = [[NSMutableString alloc] init];
 			NSMutableString* resultTypeName = [[NSMutableString alloc] init];
@@ -197,8 +172,8 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
 			[theEngine getResultValueAtPos:c storeIn:resultValue];
 			[theEngine getResultTypeNameAtPos:c storeIn:resultTypeName];
             
-            [self fireEvent:@"scan_complete" withObject:@{@"value":[resultValue copy], @"barcode_type":[resultTypeName copy]}];
-			
+            [returnArray addObject:@{@"value":[resultValue copy], @"barcode_type":[resultTypeName copy]}];
+            
 			if(resultValue != nil) {
 				[resultValue release];
 			}
@@ -206,21 +181,18 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
 				[resultTypeName release];
 			}
 		}
-		
+        
+        [returnObject setObject:resultCount  forKey:@"resultCount"];
+        [returnObject setObject:returnArray  forKey:@"results"];
+        [returnObject setObject: [[TiBlob alloc] initWithImage:[[[UIImage alloc] initWithCGImage: theImage scale: 1.0 orientation: theOrientation] autorelease]]  forKey:@"image"];
+        
+        [self fireEvent:@"recognitionComplete" withObject:returnArray];
+        
+        [returnArray release];
+
 	}
 	
-    /*
-	if(theImage != nil) {
-		NSLog(@"sdt_brc_ios_sample3ViewController::onRecognitionComplete. Set image = %d", (id)theImage);
-		
-        //imageView.image = [[[UIImage alloc] initWithCGImage: theImage scale: 1.0 orientation: theOrientation] autorelease];
-	}
-    */
-    
-	//NSLog(@"onRecognitionComplete <-");
-    
-	//Returning YES will close scanner dialog
-	return YES;
+	return NO;
     
 }
 

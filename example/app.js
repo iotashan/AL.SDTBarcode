@@ -14,16 +14,14 @@ win.open();
 
 // TODO: write your module tests here
 var SDTBarcode = require('AL.SDTBarcode');
-SDTBarcode.addEventListener("scan_complete", function(e) {
+SDTBarcode.addEventListener("recognitionComplete", function(e) {
   Ti.API.info(JSON.stringify(e));
 })
 
 var overlay = Ti.UI.createView({
   top: 10,
-  left: 10,
-  right: 10,
   height: 48,
-  width: 300,
+  width: Ti.UI.FILL,
   backgroundColor: "green",
   opacity: 0.6,
 });
