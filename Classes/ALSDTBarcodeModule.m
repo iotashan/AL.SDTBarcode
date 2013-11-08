@@ -97,6 +97,8 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
         {
             ENSURE_TYPE(overlayProxy, TiViewProxy);
             overlayView = overlayProxy.view;
+            
+            [TiUtils setView:overlayView positionRect:[UIScreen mainScreen].bounds];
         }
         
         BOOL useFrontCamera = [TiUtils boolValue:@"useFrontCamera" properties:args def:false];
