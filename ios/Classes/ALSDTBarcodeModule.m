@@ -163,6 +163,9 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
 	 
 	if(theEngine != nil) {
 		int resultCount = [theEngine getResultsCount];
+        if (!resultCount) {
+            return NO; // on device, the scanner fires this method when it's not done
+        }
         NSMutableArray* returnArray = [NSMutableArray array];
         NSMutableDictionary* returnObject = [[NSMutableDictionary alloc] init];
 		for (int c = 0; c < resultCount; c++) {
@@ -182,11 +185,11 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
 			}
 		}
         
-        [returnObject setObject:resultCount  forKey:@"resultCount"];
+        [returnObject setObject:[NSNumber numberWithInteger:resultCount]  forKey:@"resultCount"];
         [returnObject setObject:returnArray  forKey:@"results"];
         [returnObject setObject: [[TiBlob alloc] initWithImage:[[[UIImage alloc] initWithCGImage: theImage scale: 1.0 orientation: theOrientation] autorelease]]  forKey:@"image"];
         
-        [self fireEvent:@"recognitionComplete" withObject:returnArray];
+        [self fireEvent:@"recognitionComplete" withObject:returnObject];
         
         [returnArray release];
 
