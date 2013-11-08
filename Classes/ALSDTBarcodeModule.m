@@ -105,6 +105,8 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
 
         BOOL enableFlash = [TiUtils boolValue:@"enableFlash" properties:args def:false];
 
+        NSString* closeButtonText = [TiUtils stringValue:@"closeButtonText" properties:args def:@"Close"];
+
         NSString * licenseKey = [TiUtils stringValue:@"licenseKey" properties:args def:@"DEVELOPER LICENSE"];
         
         scaner = [[[SDTBarcodeScannerViewController alloc] initWithLicenseEx:licenseKey
@@ -112,7 +114,8 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
                                                                customOverlay:overlayView
                                                               useFrontCamera:useFrontCamera
                                                              enableAutofocus:enableAutofocus
-                                                                 enableFlash:enableFlash] retain];
+                                                                 enableFlash:enableFlash
+                                                             closeButtonText: closeButtonText] retain];
         
     }, YES);
     return nil;
