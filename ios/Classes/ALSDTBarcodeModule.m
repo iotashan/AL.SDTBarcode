@@ -98,7 +98,7 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
             ENSURE_TYPE(overlayProxy, TiViewProxy);
             overlayView = overlayProxy.view;
             
-            [TiUtils setView:overlayView positionRect:[UIScreen mainScreen].bounds];
+//            [TiUtils setView:overlayView positionRect:[UIScreen mainScreen].bounds];
         }
         
         BOOL useFrontCamera = [TiUtils boolValue:@"useFrontCamera" properties:args def:false];
@@ -129,7 +129,7 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
         ENSURE_UI_THREAD(showScanner, args);
 
         // Specify barcode type flags
-		[scaner setReadInputTypes:SDTBARCODETYPE_ALL_1D];
+		[scaner setReadInputTypes:SDTBARCODETYPE_CODE128|SDTBARCODETYPE_CODE39];
         [scaner startScan:[TiApp app].controller];
     }
     return nil;
