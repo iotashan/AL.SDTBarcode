@@ -8,6 +8,7 @@
  */
 package al.sdtbarcode;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +24,7 @@ import sdt.brc.android.OnBarcodeScanActivityRecognitionListener;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.YuvImage;
 import android.view.View;
 
@@ -80,7 +82,7 @@ public class SdtbarcodeModule extends KrollModule
 	public void init(@Kroll.argument(optional = false) HashMap args) {
 		KrollDict argsDict = new KrollDict(args);
 
-		licenseKey = argsDict.getString("licenseKey");
+		licenseKey = argsDict.optString("licenseKey","DEVELOPER LICENSE");
 
 		if (args.containsKey("overlay")) {
 			overlay = (TiViewProxy) args.get("overlay");
@@ -95,11 +97,11 @@ public class SdtbarcodeModule extends KrollModule
 
 	@Kroll.method
 	public void showScanner() {
-//		mCamDlg = new BarcodeScanDialog(TiApplication.getInstance().getCurrentActivity(),licenseKey,overlay.getOrCreateView().getNativeView());
-		mCamDlg = new BarcodeScanDialog(TiApplication.getInstance().getCurrentActivity(),"LICENSE KEY");
+		mCamDlg = new BarcodeScanDialog(TiApplication.getInstance().getCurrentActivity(),licenseKey,overlay.getOrCreateView().getNativeView());
+//		mCamDlg = new BarcodeScanDialog(TiApplication.getInstance().getCurrentActivity(),licenseKey);
 
 		if (mCamDlg != null) {
-			mCamDlg.setBarcodeTypes(BarcodeReader.SDTBARCODE_ALL_1D);
+			mCamDlg.setBarcodeTypes(BarcodeReader.SDTBARCODE_CODE39|BarcodeReader.SDTBARCODE_CODE128);
 			mCamDlg.showActiveArea(true);
 
 			mCamDlg.setRecognitionListener(new OnRecognitionListener() {
@@ -112,7 +114,11 @@ public class SdtbarcodeModule extends KrollModule
 					// convert Yuv to TiBlob
 					if(srcImage != null) {
 						Bitmap bm = BarcodeReaderUtil.decodeImageToBitmap(srcImage);
-						image = TiBlob.blobFromImage(bm);
+						// convert to png
+						ByteArrayOutputStream bos = new ByteArrayOutputStream();
+						bm.compress(CompressFormat.PNG, 100, bos);
+						
+						image = TiBlob.blobFromData(bos.toByteArray(),"image/png");
 					} else {
 						image = null;
 					}
@@ -124,13 +130,14 @@ public class SdtbarcodeModule extends KrollModule
 						resultObject.put("value", barcodeReaderResult.getValue());
 						parsedResults.add(resultObject);
 					}
+					Object[] retResults = parsedResults.toArray(new Object[parsedResults.size()]);
 
-					HashMap<String, Object> dict = new HashMap<String, Object>();
-					dict.put("resultCount",resultCount);
-					dict.put("results",parsedResults);
-					dict.put("image",image);
+					KrollDict event = new KrollDict();
+					event.put("resultCount",resultCount);
+					event.put("results",retResults);
+					event.put("image",image);
 
-					fireEvent("recognitionComplete", dict);
+					fireEvent("recognitionComplete", event);
 				}
 			});
 			mCamDlg.enableFlashlight(enableFlash);
