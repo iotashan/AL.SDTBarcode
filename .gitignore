@@ -1,1 +1,4 @@
 /build/
+ios/build
+android/build
+android/libs
