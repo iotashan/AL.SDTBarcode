@@ -5,36 +5,36 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>647E7632-CF9E-45F0-A7EA-C18AE7668658</string>
+	<string>9F7FED3A-BF75-402A-9945-5AC06E47D037</string>
 	<key>IDESourceControlProjectName</key>
 	<string>SDTBarcode</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>C20E5F95-0B90-441A-AC03-4A6447B8E313</key>
-		<string>ssh://bitbucket.org/iotashan/barcode.git</string>
+		<key>4A50BD87-3B92-4C62-AC23-E98928538DA7</key>
+		<string>ssh://bitbucket.org/appersonlabs/barcode.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>ios/SDTBarcode.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>C20E5F95-0B90-441A-AC03-4A6447B8E313</key>
+		<key>4A50BD87-3B92-4C62-AC23-E98928538DA7</key>
 		<string>../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>ssh://bitbucket.org/iotashan/barcode.git</string>
+	<string>ssh://bitbucket.org/appersonlabs/barcode.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>C20E5F95-0B90-441A-AC03-4A6447B8E313</string>
+	<string>4A50BD87-3B92-4C62-AC23-E98928538DA7</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>C20E5F95-0B90-441A-AC03-4A6447B8E313</string>
+			<string>4A50BD87-3B92-4C62-AC23-E98928538DA7</string>
 			<key>IDESourceControlWCCName</key>
-			<string>barcode</string>
+			<string>AL</string>
 		</dict>
 	</array>
 </dict>

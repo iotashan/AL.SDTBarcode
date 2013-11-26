@@ -26,6 +26,18 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
     return [[[TiViewController alloc] initWithViewProxy:proxy] autorelease].view;
 }
 
+#warning "Warning: Overriding default statusbar behavior for SDTBarcodeScannerViewController"
+@implementation UIViewController(Privates)
+
+- (BOOL)prefersStatusBarHidden {
+    NSLog(@"%@", [self class])
+    if ([[self class] isEqualToString:@"SDTBarcodeScannerViewController"] ) {
+        return YES;
+    }
+}
+
+
+@end
 @implementation ALSDTBarcodeModule
 
 #pragma mark Internal
@@ -118,6 +130,8 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
                                                              enableAutofocus:enableAutofocus
                                                                  enableFlash:enableFlash
                                                              closeButtonText: closeButtonText] retain];
+        [scaner setSupportedOrientations: UIInterfaceOrientationMaskLandscapeLeft];
+
         
     }, YES);
     return nil;
@@ -131,6 +145,11 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
         // Specify barcode type flags
 		[scaner setReadInputTypes:SDTBARCODETYPE_CODE128|SDTBARCODETYPE_CODE39];
         [scaner startScan:[TiApp app].controller];
+        if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
+
+            [[UIApplication sharedApplication] setStatusBarHidden:true withAnimation:UIStatusBarAnimationNone];
+        
+        }
     }
     return nil;
 }
@@ -138,6 +157,12 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
 -(id)hideScanner:(id)args {
     if (scaner != nil) {
         [scaner stopScan];
+        if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
+
+            [[UIApplication sharedApplication] setStatusBarHidden:FALSE withAnimation:UIStatusBarAnimationNone];
+        
+        }
+
     }
     return nil;
 }

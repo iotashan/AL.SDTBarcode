@@ -81,5 +81,7 @@
 
 -(int)getResultPositionBottomAtPos:(int)position;
 
+-(void)setCameraSource:(BOOL)isCameraSource;
+
 @end
 
