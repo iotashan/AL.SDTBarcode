@@ -31,7 +31,7 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
 
 - (BOOL)prefersStatusBarHidden {
     NSLog(@"%@", [self class])
-    if ([[self class] isEqualToString:@"SDTBarcodeScannerViewController"] ) {
+    if ([NSStringFromClass([self class]) isEqualToString:@"SDTBarcodeScannerViewController"] ) {
         return YES;
     }
 }
