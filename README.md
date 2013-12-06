@@ -9,7 +9,7 @@ Why not just use z-lib based SDKs? Well they kinda suck. This SDK is inexpesive 
 We will be expanding this module as we need to for new projects and to update the SDK for existing projects. Feel free to contribute.
 
 ## Useage
-
+~~~javascript
 var SDTBarcode = require('AL.SDTBarcode');
 var win = Ti.UI.createWindow({
     backgroundColor:'white'
@@ -53,3 +53,4 @@ SDTBarcode.showScanner();
 // SDTBarcode.hideScanner();
 SDTBarcode.flashOn();
 // SDTBarcode.flashOff();
+~~~
