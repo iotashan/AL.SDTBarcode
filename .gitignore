@@ -2,3 +2,9 @@
 ios/build
 android/build
 android/libs
+
+.DS_Store
+
+/ios/.DS_Store
+
+/.DS_Store
