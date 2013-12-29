@@ -40,14 +40,11 @@
     NSLog(@"this far");
     SDTBarcodeEngine* barcodeEngine = [[SDTBarcodeEngine alloc] initWithLicense:@"YOUR DEVELOPER LICENSE"];
 
-    NSLog(@"this far2");
-
 	if(scaner != nil){
         // Specify barcode type flags
 		[scaner setReadInputTypes:SDTBARCODETYPE_ALL_1D];
 		[scaner startScan: (UIViewController*) self];
     }
-    NSLog(@"this far3");
 
     UIView *overlayView = nil;
     TiViewProxy *overlayProxy = [args objectForKey:@"overlay"];
