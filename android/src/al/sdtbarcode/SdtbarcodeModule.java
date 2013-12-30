@@ -57,6 +57,7 @@ public class SdtbarcodeModule extends KrollModule
 	private boolean useFrontCamera = false;
 	private boolean enableAutofocus = true;
 	private boolean enableFlash = false;
+	private boolean showActiveArea = false;
 	
 	public SdtbarcodeModule()
 	{
@@ -93,6 +94,7 @@ public class SdtbarcodeModule extends KrollModule
 		useFrontCamera = argsDict.optBoolean("useFrontCamera", false);
 		enableAutofocus = argsDict.optBoolean("enableAutofocus", true);
 		enableFlash = argsDict.optBoolean("enableFlash", false);
+		showActiveArea = argsDict.optBoolean("showActiveArea", false);
 	}
 
 	@Kroll.method
@@ -102,7 +104,8 @@ public class SdtbarcodeModule extends KrollModule
 
 		if (mCamDlg != null) {
 			mCamDlg.setBarcodeTypes(BarcodeReader.SDTBARCODE_CODE39|BarcodeReader.SDTBARCODE_CODE128);
-			mCamDlg.showActiveArea(true);
+			mCamDlg.showActiveArea(showActiveArea);
+			mCamDlg.enableFlashlight(enableFlash);
 
 			mCamDlg.setRecognitionListener(new OnRecognitionListener() {
 				public void onRecognitionResults(List results, YuvImage srcImage) {
@@ -140,7 +143,6 @@ public class SdtbarcodeModule extends KrollModule
 					fireEvent("recognitionComplete", event);
 				}
 			});
-			mCamDlg.enableFlashlight(enableFlash);
 
 			mCamDlg.show();
 		}
