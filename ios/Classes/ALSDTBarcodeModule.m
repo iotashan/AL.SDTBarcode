@@ -36,7 +36,29 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
     }
 }
 
+@end
 
+@implementation SDTBarcodeScannerViewController(Titanium)
+-(BOOL)shouldAutorotate
+{
+    
+    return UIInterfaceOrientationMaskLandscape ;
+    
+}
+
+-(NSUInteger)supportedInterfaceOrientations
+{
+    
+    return UIInterfaceOrientationMaskLandscape;
+    
+}
+
+//- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation
+//{
+//    
+//    return UIInterfaceOrientationLandscapeRight;
+//    
+//}
 @end
 @implementation ALSDTBarcodeModule
 
