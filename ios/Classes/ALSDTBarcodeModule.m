@@ -130,7 +130,7 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
                                                              enableAutofocus:enableAutofocus
                                                                  enableFlash:enableFlash
                                                              closeButtonText: closeButtonText] retain];
-        [scaner setSupportedOrientations: UIInterfaceOrientationMaskLandscapeLeft];
+        [scaner setSupportedOrientations: UIInterfaceOrientationMaskAll];
 
         
     }, YES);
@@ -156,9 +156,15 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
 
 -(id)hideScanner:(id)args {
     if (scaner != nil) {
-        [scaner stopScan];
-        if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
+        NSLog(@"hideScanner called");
+        if (![scaner.presentedViewController isBeingDismissed])
+        {
+            NSLog(@"stopScan called");
 
+            [scaner stopScan];
+        }
+        if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
+            
             [[UIApplication sharedApplication] setStatusBarHidden:FALSE withAnimation:UIStatusBarAnimationNone];
         
         }
