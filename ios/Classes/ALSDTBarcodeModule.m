@@ -167,11 +167,6 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
         // Specify barcode type flags
 		[scaner setReadInputTypes:SDTBARCODETYPE_CODE128|SDTBARCODETYPE_CODE39];
         [scaner startScan:[TiApp app].controller];
-        if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
-
-            [[UIApplication sharedApplication] setStatusBarHidden:true withAnimation:UIStatusBarAnimationNone];
-        
-        }
     }
     return nil;
 }
@@ -183,12 +178,6 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
         {
             [scaner stopScan];
         }
-        if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
-            
-            [[UIApplication sharedApplication] setStatusBarHidden:FALSE withAnimation:UIStatusBarAnimationNone];
-        
-        }
-
     }
     return nil;
 }
