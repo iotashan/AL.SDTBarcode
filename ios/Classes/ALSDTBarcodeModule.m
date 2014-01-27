@@ -159,7 +159,7 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
     return nil;
 }
 
--(void)showScanner:(id)args
+-(id)showScanner:(id)args
 {
 	if(scaner != nil){
         ENSURE_UI_THREAD(showScanner, args);
@@ -167,18 +167,30 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
         // Specify barcode type flags
 		[scaner setReadInputTypes:SDTBARCODETYPE_CODE128|SDTBARCODETYPE_CODE39];
         [scaner startScan:[TiApp app].controller];
+        if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
+
+            [[UIApplication sharedApplication] setStatusBarHidden:true withAnimation:UIStatusBarAnimationNone];
+        
+        }
     }
+    return nil;
 }
 
--(void)hideScanner:(id)args {
+-(id)hideScanner:(id)args {
     if (scaner != nil) {
-        
+        ENSURE_UI_THREAD(hideScanner, args);
         if (![scaner.presentedViewController isBeingDismissed])
         {
             [scaner stopScan];
         }
+        if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
+            
+            [[UIApplication sharedApplication] setStatusBarHidden:FALSE withAnimation:UIStatusBarAnimationNone];
+        
+        }
 
     }
+    return nil;
 }
 
 -(id)flashOn:(id)args {
@@ -238,7 +250,7 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
         [returnArray release];
 
 	}
-	NSLog(@"Returning NO");
+	
 	return NO;
     
 }
