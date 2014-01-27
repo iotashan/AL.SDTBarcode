@@ -178,17 +178,15 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
 
 -(id)hideScanner:(id)args {
     if (scaner != nil) {
-        NSLog(@"hideScanner called");
-        if (![scaner.presentedViewController isBeingDismissed])
-        {
-            NSLog(@"stopScan called");
-
-            [scaner stopScan];
-        }
         if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
             
             [[UIApplication sharedApplication] setStatusBarHidden:FALSE withAnimation:UIStatusBarAnimationNone];
+            
+        }
         
+        if (![scaner.presentedViewController isBeingDismissed])
+        {
+            [scaner stopScan];
         }
 
     }
@@ -252,7 +250,7 @@ UIView * ViewForViewProxy(TiViewProxy * proxy)
         [returnArray release];
 
 	}
-	
+	NSLog(@"Returning NO");
 	return NO;
     
 }
