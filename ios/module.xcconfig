@@ -27,4 +27,4 @@
 // 
 
 
-OTHER_LDFLAGS=$(inherited) -framework CoreMedia -framework CoreVideo -framework AVFoundation -framework UIKit -framework Foundation -framework CoreGraphics -L "/Users/mattapperson/Development/AL.SDTBarcode/ios/lib/" -l sdt_brc_ios2_v6
+OTHER_LDFLAGS=$(inherited) -framework CoreMedia -framework CoreVideo -framework AVFoundation -framework UIKit -framework Foundation -framework CoreGraphics -L "/Users/shan/dev/Apperson Labs/Apperson Labs/barcode/ios/lib/" -l sdt_brc_ios2_v6
