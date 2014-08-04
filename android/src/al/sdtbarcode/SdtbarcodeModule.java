@@ -100,16 +100,18 @@ public class SdtbarcodeModule extends KrollModule
 
 	@Kroll.method
 	public void showScanner() {
-		BarcodeScanActivity.ShowBarcodeScanActivityForResult(	TiApplication.getInstance().getCurrentActivity(),
+        Log.d(LCAT, "************************** showScanner()");
+		BarcodeScanActivity.showBarcodeScanActivityForResult(	TiApplication.getInstance().getCurrentActivity(),
 																21734,
 																licenseKey,
-																BarcodeReader.SDTBARCODE_CODE39|BarcodeReader.SDTBARCODE_CODE128,
+																BarcodeReader.SDTBARCODE_CODE39,
 																enableFlash,
 																showActiveArea,
 																new	OnBarcodeScanActivityRecognitionListener() {
 																	
 																	@Override
 																	public boolean onActivityRecognitionResults(List results, YuvImage srcImage) {
+                                                                        Log.d(LCAT, "************************** onActivityRecognitionResults(List results, YuvImage srcImage)");
 																		// Populate results
 																		int resultCount = 0;
 																		String firstResult = "";
@@ -119,11 +121,11 @@ public class SdtbarcodeModule extends KrollModule
 
 																		for (BarcodeReaderResult barcodeReaderResult : (List<BarcodeReaderResult>)results) {
 																			resultCount++;
+                                                                            Log.d(LCAT, "************************** result "+resultCount+" : " + barcodeReaderResult.getValue());
 																			HashMap<String, Object> resultObject = new HashMap<String, Object>();
 																			resultObject.put("barcode_type", barcodeReaderResult.getTypeName());
 																			resultObject.put("value", barcodeReaderResult.getValue());
 																			if (firstResult == "") {
-Log.d(LCAT, "************************** first result" + barcodeReaderResult.getValue());
 																				firstResult = barcodeReaderResult.getValue();
 																			}
 																			parsedResults.add(resultObject);
