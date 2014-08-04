@@ -2,7 +2,7 @@
 # this is your module manifest and used by Titanium
 # during compilation, packaging, distribution, etc.
 #
-version: 0.1
+version: 0.3
 apiversion: 2
 description: SDTBarcode
 author: Your Name
@@ -14,4 +14,4 @@ name: SDTBarcode
 moduleid: al.sdtbarcode
 guid: d7f0076e-356f-4c98-8948-86ebc379e3a2
 platform: android
-minsdk: 3.2.0.v20131030184044
+minsdk: 3.2.3.GA

@@ -58,6 +58,7 @@ public class SdtbarcodeModule extends KrollModule
 	private boolean enableAutofocus = true;
 	private boolean enableFlash = false;
 	private boolean showActiveArea = false;
+	private boolean timeToClose = false;
 	
 	public SdtbarcodeModule()
 	{
@@ -99,77 +100,82 @@ public class SdtbarcodeModule extends KrollModule
 
 	@Kroll.method
 	public void showScanner() {
-		mCamDlg = new BarcodeScanDialog(TiApplication.getInstance().getCurrentActivity(),licenseKey,overlay.getOrCreateView().getNativeView());
-//		mCamDlg = new BarcodeScanDialog(TiApplication.getInstance().getCurrentActivity(),licenseKey);
+        Log.d(LCAT, "************************** showScanner()");
+		BarcodeScanActivity.showBarcodeScanActivityForResult(	TiApplication.getInstance().getCurrentActivity(),
+																21734,
+																licenseKey,
+																BarcodeReader.SDTBARCODE_CODE39,
+																enableFlash,
+																showActiveArea,
+																new	OnBarcodeScanActivityRecognitionListener() {
+																	
+																	@Override
+																	public boolean onActivityRecognitionResults(List results, YuvImage srcImage) {
+                                                                        Log.d(LCAT, "************************** onActivityRecognitionResults(List results, YuvImage srcImage)");
+																		// Populate results
+																		int resultCount = 0;
+																		String firstResult = "";
+																		List<HashMap> parsedResults = new ArrayList<HashMap>();
+																		TiBlob image;
+																		
 
-		if (mCamDlg != null) {
-			mCamDlg.setBarcodeTypes(BarcodeReader.SDTBARCODE_CODE39|BarcodeReader.SDTBARCODE_CODE128);
-			mCamDlg.showActiveArea(showActiveArea);
-			mCamDlg.enableFlashlight(enableFlash);
-
-			mCamDlg.setRecognitionListener(new OnRecognitionListener() {
-				public void onRecognitionResults(List results, YuvImage srcImage) {
-					// Populate results
-					int resultCount = 0;
-					List<HashMap> parsedResults = new ArrayList<HashMap>();
-					TiBlob image;
-
-					// convert Yuv to TiBlob
-					if(srcImage != null) {
-						Bitmap bm = BarcodeReaderUtil.decodeImageToBitmap(srcImage);
-						// convert to png
-						ByteArrayOutputStream bos = new ByteArrayOutputStream();
-						bm.compress(CompressFormat.PNG, 100, bos);
+																		for (BarcodeReaderResult barcodeReaderResult : (List<BarcodeReaderResult>)results) {
+																			resultCount++;
+                                                                            Log.d(LCAT, "************************** result "+resultCount+" : " + barcodeReaderResult.getValue());
+																			HashMap<String, Object> resultObject = new HashMap<String, Object>();
+																			resultObject.put("barcode_type", barcodeReaderResult.getTypeName());
+																			resultObject.put("value", barcodeReaderResult.getValue());
+																			if (firstResult == "") {
+																				firstResult = barcodeReaderResult.getValue();
+																			}
+																			parsedResults.add(resultObject);
+																		}
+																		Object[] retResults = parsedResults.toArray(new Object[parsedResults.size()]);
+																		
+																		if (firstResult != "" && firstResult.length() > 16) {
+Log.d(LCAT, "************************** firstResult.length() > 16");
+																			// convert Yuv to TiBlob
+																			if(srcImage != null) {
+																				Bitmap bm = BarcodeReaderUtil.decodeImageToBitmap(srcImage);
+																				// convert to png
+																				ByteArrayOutputStream bos = new ByteArrayOutputStream();
+																				bm.compress(CompressFormat.PNG, 100, bos);
 						
-						image = TiBlob.blobFromData(bos.toByteArray(),"image/png");
-					} else {
-						image = null;
-					}
+																				image = TiBlob.blobFromData(bos.toByteArray(),"image/png");
+																			} else {
+																				image = null;
+																			}
 
-					for (BarcodeReaderResult barcodeReaderResult : (List<BarcodeReaderResult>)results) {
-						resultCount++;
-						HashMap<String, Object> resultObject = new HashMap<String, Object>();
-						resultObject.put("barcode_type", barcodeReaderResult.getTypeName());
-						resultObject.put("value", barcodeReaderResult.getValue());
-						parsedResults.add(resultObject);
-					}
-					Object[] retResults = parsedResults.toArray(new Object[parsedResults.size()]);
+																			KrollDict event = new KrollDict();
+																			event.put("resultCount",resultCount);
+																			event.put("results",retResults);
+																			event.put("image",image);
 
-					KrollDict event = new KrollDict();
-					event.put("resultCount",resultCount);
-					event.put("results",retResults);
-					event.put("image",image);
-
-					fireEvent("recognitionComplete", event);
-				}
-			});
-
-			mCamDlg.show();
-		}
+																			fireEvent("recognitionComplete", event);
+																			
+																			return true;
+																		} else {
+																			return false;
+																		}
+																	}
+																},
+																overlay.getOrCreateView().getNativeView()
+															);
 	}
 
 	@Kroll.method
 	public void hideScanner() {
-		if (mCamDlg != null) {
-			mCamDlg.hide();
-			mCamDlg.dismiss();
-			mCamDlg = null;
-		}
+		TiApplication.getInstance().getCurrentActivity().finishActivity(21734);
 	}
 
 	@Kroll.method
 	public void flashOn() {
-		if (mCamDlg != null) {
-			mCamDlg.enableFlashlight(true);
-		}
+		return;
 	}
 
 	@Kroll.method
 	public void flashOff() {
-		if (mCamDlg != null) {
-			mCamDlg.enableFlashlight(false);
-		}
+		return;
 	}
 
 }
-
